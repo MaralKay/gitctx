@@ -1,5 +1,5 @@
 # gitctx
-
+### Still in progress
 `gitctx` is a simple command line tool written in Golang, designed to facilitate the management and switching of multiple git configurations, which we refer to as "contexts." Inspired by `kubectx`, this tool works by storing mappings of git config files and ssh config files.
 
 ## Features
