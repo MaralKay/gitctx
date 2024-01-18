@@ -24,13 +24,13 @@ Make sure that your Go binary directory is in your system's PATH.
 To switch to a different git configuration context, use the following command:
 
 ```bash
-gitctx switch <context-name>
+gitctx <context-name>
 ```
 
 ### Show Current Context
-To show the current git configuration:
+To show the current git configuration (currently it's just an output of `git config --list`):
 ```bash
-gitctx list
+gitctx show
 ```
 
 ### Adding a Context
