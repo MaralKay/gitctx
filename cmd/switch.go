@@ -35,7 +35,10 @@ func switchContext(name string, verboseFlag bool) {
 				}
 				os.Exit(0)
 			} else {
-				fmt.Printf("Removing existing symlink: %s\n", targetAbsPath)
+				if verboseFlag == true {
+					fmt.Printf("Removing existing symlink: %s\n", targetAbsPath)
+				}
+
 				if err := os.Remove(targetAbsPath); err != nil {
 					if verboseFlag == true {
 						fmt.Printf("Error: Unable to remove existing symlink '%s'.\n", targetAbsPath)
