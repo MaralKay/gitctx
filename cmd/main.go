@@ -18,6 +18,11 @@ func main() {
 	addCommand := flag.NewFlagSet("add", flag.ExitOnError)
 	showCommand := flag.NewFlagSet("show", flag.ExitOnError)
 
+	// Set Usage message for commands
+	helpCommand.Usage = showHelp
+	addCommand.Usage = showHelp
+	showCommand.Usage = showHelp
+
 	// Parse the command-line arguments
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: gitctx <subcommand> [options]")
@@ -25,6 +30,10 @@ func main() {
 	}
 
 	if len(os.Args) == 3 {
+		if os.Args[1] == "-v" || os.Args[2] == "-v" {
+			verboseFlag = true
+		}
+	} else if len(os.Args) == 4 {
 		if os.Args[2] == "-v" || os.Args[3] == "-v" {
 			verboseFlag = true
 		}
