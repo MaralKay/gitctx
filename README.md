@@ -20,17 +20,48 @@ go get -u github.com/MaralKay/gitctx
 Make sure that your Go binary directory is in your system's PATH.
 
 ## Usage
+```bash
+USAGE:
+  gitctx list   [-v]      : list the contexts
+  gitctx <NAME> [-v]      : switch to context <NAME>
+  gitctx show             : show current context
+  gitctx add    [-v]      : add a new context
+
+
+FLAGS:
+  -v                      : show verbose output
+
+
+  gitctx -h               : show this message
+```
+
 ### Switching Contexts
 To switch to a different git configuration context, use the following command:
 
 ```bash
 gitctx <context-name>
 ```
+```bash
+~ gitctx work
+
+Updated context to work
+```
 
 ### Show Current Context
 To show the current git context:
 ```bash
-gitctx show
+~ gitctx show
+
+work
+```
+
+### List Contexts
+To list the configured contexts:
+```bash
+~ gitctx list
+
+work
+personal
 ```
 
 ### Adding a Context
@@ -40,6 +71,33 @@ To add a new git configuration context, use:
 gitctx add
 ```
 You will be prompted to provide the paths of the configs for a new mapping.
+
+## Prerequisites
+The program assumes you have different ssh keys for your Github accounts. Following that, you need to save separate ssh config files for each gitconfig file.
+
+#### Example:
+##### Github account #1:
+A file containing git configuration
+`~/.gitconfig-personal`
+
+
+A file with the ssh config for this `~/.ssh/config-personal-git`
+```bash
+Host github.com
+	HostName github.com
+	User git
+	IdentityFile <PATH TO SSH KEY USED WITH THIS ACCOUNT>
+```
+##### Github account #2:
+A file containing git configuration `~/.gitconfig-work`
+
+A file with the ssh config for this `~/.ssh/config-work-git`
+```bash
+Host github.com
+	HostName github.com
+	User git
+	IdentityFile <PATH TO SSH KEY USED WITH THIS ACCOUNT>
+```
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
