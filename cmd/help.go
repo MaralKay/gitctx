@@ -5,10 +5,13 @@ import "fmt"
 func showHelp() {
 	helpMessage := `
 USAGE:
-  gitctx list             : list the contexts
-  gitctx <NAME>           : switch to context <NAME>
-  gitctx show             : show current context
-  gitctx add              : add a new context
+  gitctx list                       : list the contexts
+  gitctx <NAME>                     : switch to context <NAME>
+  gitctx show                       : show current context
+  gitctx add                        : add a new context
+
+
+  gitctx [<NAME>] [<command>] -v    : show verbose output
 
 
   gitctx -h               : show this message

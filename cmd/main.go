@@ -11,6 +11,7 @@ var userHomePath = getUserHome()
 var configFileName = userHomePath + "/.gitctx.config"
 var currentContextPath = userHomePath + "/.gitctx.current"
 var targetFile = userHomePath + "/.gitconfig"
+var verboseFlag = false
 
 func main() {
 	helpCommand := flag.NewFlagSet("-h", flag.ExitOnError)
@@ -23,6 +24,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	if len(os.Args) == 3 {
+		if os.Args[2] == "-v" || os.Args[3] == "-v" {
+			verboseFlag = true
+		}
+	}
+
 	// Parse the subcommand
 	subcommand := os.Args[1]
 	switch subcommand {
@@ -33,12 +40,12 @@ func main() {
 		listContexts()
 	case "add":
 		addCommand.Parse(os.Args[2:])
-		initSymlink()
+		addContext(verboseFlag)
 	case "show":
 		showCommand.Parse(os.Args[2:])
 		showContext()
 	default:
-		nameSymlink(subcommand)
+		switchContext(subcommand, verboseFlag)
 	}
 }
 

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-func nameSymlink(name string) {
+func switchContext(name string, verboseFlag bool) {
 
 	// Read the configuration file
 	config, err := readConfig()
@@ -30,12 +30,17 @@ func nameSymlink(name string) {
 			// Check if the existing symlink already points to the specified .gitconfig file
 			currentTarget, err := os.Readlink(targetAbsPath)
 			if err == nil && currentTarget == path[0] {
-				fmt.Println("Symlink already exists and points to the specified .gitconfig file. Doing nothing.")
+				if verboseFlag == true {
+					fmt.Println("Symlink already exists and points to the specified .gitconfig file. Doing nothing.")
+				}
 				os.Exit(0)
 			} else {
 				fmt.Printf("Removing existing symlink: %s\n", targetAbsPath)
 				if err := os.Remove(targetAbsPath); err != nil {
-					fmt.Printf("Error: Unable to remove existing symlink '%s'.\n", targetAbsPath)
+					if verboseFlag == true {
+						fmt.Printf("Error: Unable to remove existing symlink '%s'.\n", targetAbsPath)
+					}
+					fmt.Println("Error: Unable to switch context.")
 					os.Exit(1)
 				}
 			}
@@ -43,22 +48,28 @@ func nameSymlink(name string) {
 
 		// Create a new symlink
 		if err := os.Symlink(path[0], targetAbsPath); err != nil {
-			fmt.Printf("Error: Unable to create symlink '%s' -> '%s'.\n", targetAbsPath, path)
+			if verboseFlag == true {
+				fmt.Printf("Error: Unable to create symlink '%s' -> '%s'.\n", targetAbsPath, path)
+			}
+			fmt.Println("Error: Unable to switch context.")
 			os.Exit(1)
 		}
-
-		fmt.Printf("Symlink created: %s -> %s\n", targetAbsPath, path)
+		if verboseFlag == true {
+			fmt.Printf("Symlink created: %s -> %s\n", targetAbsPath, path)
+		}
 
 		cmd := exec.Command("bash", "-c", "git config core.sshCommand \"ssh -F "+path[1]+"\"")
 
 		// Run the command and capture its output
 		output, err := cmd.CombinedOutput()
 		if err != nil {
-			fmt.Printf("Error running command: %v\n", err)
-			fmt.Println("Standard Error Output:", string(output))
+			if verboseFlag == true {
+				fmt.Println("Standard Error Output:", string(output))
+			}
+			fmt.Printf("Error setting up ssh config: %v\n", err)
 		}
 
-		if err := updateContext(name, currentContextPath); err != nil {
+		if err := updateContext(name, currentContextPath, verboseFlag); err != nil {
 			fmt.Printf("Error: Unable to update context")
 			os.Exit(1)
 		}
