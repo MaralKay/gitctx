@@ -13,7 +13,6 @@
 To install `gitctx`, you can use the following command:
 
 ```bash
-# Assuming you have Go installed
 go get -u github.com/MaralKay/gitctx
 ```
 

@@ -1,4 +1,4 @@
-module github.com/MaralKay/gitctx/m
+module github.com/MaralKay/gitctx/gitctx
 
 go 1.21.6
 
