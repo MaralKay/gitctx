@@ -28,7 +28,7 @@ gitctx <context-name>
 ```
 
 ### Show Current Context
-To show the current git configuration (currently it's just an output of `git config --list`):
+To show the current git context:
 ```bash
 gitctx show
 ```
@@ -37,7 +37,7 @@ gitctx show
 To add a new git configuration context, use:
 
 ```bash
-gitctx init
+gitctx add
 ```
 You will be prompted to provide the paths of the configs for a new mapping.
 
