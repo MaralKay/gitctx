@@ -82,7 +82,7 @@ func addContext(verboseFlag bool) {
 				fmt.Println("Symlink already exists and points to the specified .gitconfig file. Doing nothing.")
 			}
 
-			if err := updateContext(name, currentContextPath); err != nil {
+			if err := updateContext(name, currentContextPath, verboseFlag); err != nil {
 				fmt.Printf("Error: Unable to update context")
 				os.Exit(1)
 			}
@@ -115,7 +115,7 @@ func addContext(verboseFlag bool) {
 		fmt.Printf("Symlink created: %s -> %s\n", targetAbsPath, gitconfigAbsPath)
 	}
 
-	if err := updateContext(name, currentContextPath); err != nil {
+	if err := updateContext(name, currentContextPath, verboseFlag); err != nil {
 		fmt.Printf("Error: Unable to update context")
 		os.Exit(1)
 	}
