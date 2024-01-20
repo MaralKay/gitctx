@@ -13,5 +13,5 @@ func showContext() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("\n%s\n", context)
+	fmt.Printf("%s\n", context)
 }

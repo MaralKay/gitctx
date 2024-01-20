@@ -13,6 +13,7 @@ var currentContextPath = userHomePath + "/.gitctx.current"
 var targetFile = userHomePath + "/.gitconfig"
 
 func main() {
+	helpCommand := flag.NewFlagSet("-h", flag.ExitOnError)
 	addCommand := flag.NewFlagSet("add", flag.ExitOnError)
 	showCommand := flag.NewFlagSet("show", flag.ExitOnError)
 
@@ -25,6 +26,11 @@ func main() {
 	// Parse the subcommand
 	subcommand := os.Args[1]
 	switch subcommand {
+	case "-h":
+		helpCommand.Parse(os.Args[2:])
+		showHelp()
+	case "list":
+		listContexts()
 	case "add":
 		addCommand.Parse(os.Args[2:])
 		initSymlink()
