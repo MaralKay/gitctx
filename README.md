@@ -10,13 +10,7 @@
 
 ## Installation
 
-To install `gitctx`, you can use the following command:
-
-```bash
-go get -u github.com/MaralKay/gitctx
-```
-
-Make sure that your Go binary directory is in your system's PATH.
+To install `gitctx`, you can find the binary package for your OS distribution in the latest releases.
 
 ## Usage
 ```bash
