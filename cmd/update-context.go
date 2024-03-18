@@ -11,7 +11,7 @@ func updateContext(contextName string, currentContextPath string, verboseFlag bo
 		// File exists, so delete it
 		err := os.Remove(currentContextPath)
 		if err != nil {
-			if verboseFlag == true {
+			if verboseFlag {
 				fmt.Printf("Error deleting file: %v", err)
 			}
 			return fmt.Errorf("Error while updating context")
@@ -21,7 +21,7 @@ func updateContext(contextName string, currentContextPath string, verboseFlag bo
 	// Create a new empty file
 	file, err := os.Create(currentContextPath)
 	if err != nil {
-		if verboseFlag == true {
+		if verboseFlag {
 			fmt.Printf("Error creating file: %v", err)
 		}
 		return fmt.Errorf("Error while updating context")
@@ -31,7 +31,7 @@ func updateContext(contextName string, currentContextPath string, verboseFlag bo
 	// Write content to the file
 	_, err = file.WriteString(contextName)
 	if err != nil {
-		if verboseFlag == true {
+		if verboseFlag {
 			fmt.Printf("Error writing to file: %v", err)
 		}
 		return fmt.Errorf("Error while updating context")
