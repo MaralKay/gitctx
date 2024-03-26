@@ -30,17 +30,17 @@ func switchContext(name string, verboseFlag bool) {
 			// Check if the existing symlink already points to the specified .gitconfig file
 			currentTarget, err := os.Readlink(targetAbsPath)
 			if err == nil && currentTarget == path[0] {
-				if verboseFlag == true {
+				if verboseFlag {
 					fmt.Println("Symlink already exists and points to the specified .gitconfig file. Doing nothing.")
 				}
 				os.Exit(0)
 			} else {
-				if verboseFlag == true {
+				if verboseFlag {
 					fmt.Printf("Removing existing symlink: %s\n", targetAbsPath)
 				}
 
 				if err := os.Remove(targetAbsPath); err != nil {
-					if verboseFlag == true {
+					if verboseFlag {
 						fmt.Printf("Error: Unable to remove existing symlink '%s'.\n", targetAbsPath)
 					}
 					fmt.Println("Error: Unable to switch context.")
@@ -51,13 +51,13 @@ func switchContext(name string, verboseFlag bool) {
 
 		// Create a new symlink
 		if err := os.Symlink(path[0], targetAbsPath); err != nil {
-			if verboseFlag == true {
+			if verboseFlag {
 				fmt.Printf("Error: Unable to create symlink '%s' -> '%s'.\n", targetAbsPath, path)
 			}
 			fmt.Println("Error: Unable to switch context.")
 			os.Exit(1)
 		}
-		if verboseFlag == true {
+		if verboseFlag {
 			fmt.Printf("Symlink created: %s -> %s\n", targetAbsPath, path)
 		}
 
@@ -66,7 +66,7 @@ func switchContext(name string, verboseFlag bool) {
 		// Run the command and capture its output
 		output, err := cmd.CombinedOutput()
 		if err != nil {
-			if verboseFlag == true {
+			if verboseFlag {
 				fmt.Println("Standard Error Output:", string(output))
 			}
 			fmt.Printf("Error setting up ssh config: %v\n", err)

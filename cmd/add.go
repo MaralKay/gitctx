@@ -15,7 +15,7 @@ func addContext(verboseFlag bool) {
 
 	// Check if the .gitconfig file exists
 	if _, err := os.Stat(gitconfigPath); err != nil {
-		if verboseFlag == true {
+		if verboseFlag {
 			fmt.Print(err)
 		}
 		fmt.Printf("Error: .gitconfig file '%s' not found.\n", gitconfigPath)
@@ -58,7 +58,7 @@ func addContext(verboseFlag bool) {
 	// Run the command and capture its output
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		if verboseFlag == true {
+		if verboseFlag {
 			fmt.Println("Standard Error Output:", string(output))
 		}
 		fmt.Printf("Error setting up ssh config: %v\n", err)
@@ -78,7 +78,7 @@ func addContext(verboseFlag bool) {
 		// Check if the existing symlink already points to the specified .gitconfig file
 		currentTarget, err := os.Readlink(targetAbsPath)
 		if err == nil && currentTarget == gitconfigAbsPath {
-			if verboseFlag == true {
+			if verboseFlag {
 				fmt.Println("Symlink already exists and points to the specified .gitconfig file. Doing nothing.")
 			}
 
@@ -90,11 +90,11 @@ func addContext(verboseFlag bool) {
 			fmt.Printf("Updated context to %s\n", name)
 			os.Exit(0)
 		} else {
-			if verboseFlag == true {
+			if verboseFlag {
 				fmt.Printf("Removing existing symlink: %s\n", targetAbsPath)
 			}
 			if err := os.Remove(targetAbsPath); err != nil {
-				if verboseFlag == true {
+				if verboseFlag {
 					fmt.Printf("Error: Unable to remove existing symlink '%s'.\n", targetAbsPath)
 				}
 				fmt.Println("Error: Unable to set context.")
@@ -105,13 +105,13 @@ func addContext(verboseFlag bool) {
 
 	// Create a new symlink
 	if err := os.Symlink(gitconfigAbsPath, targetAbsPath); err != nil {
-		if verboseFlag == true {
+		if verboseFlag {
 			fmt.Printf("Error: Unable to create symlink '%s' -> '%s'.\n", targetAbsPath, gitconfigAbsPath)
 		}
 		fmt.Println("Error: Unable to set context.")
 		os.Exit(1)
 	}
-	if verboseFlag == true {
+	if verboseFlag {
 		fmt.Printf("Symlink created: %s -> %s\n", targetAbsPath, gitconfigAbsPath)
 	}
 

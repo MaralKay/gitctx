@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"os/user"
 )
 
@@ -39,6 +40,12 @@ func main() {
 		}
 	}
 
+	// Check if inside a Git repository directory
+	if !isGitRepo() {
+		fmt.Println("Error: You must be in a Git repository")
+		os.Exit(1)
+	}
+
 	// Parse the subcommand
 	subcommand := os.Args[1]
 	switch subcommand {
@@ -67,4 +74,12 @@ func getUserHome() string {
 	}
 
 	return currentUser.HomeDir
+}
+
+func isGitRepo() bool {
+	cmd := exec.Command("git", "rev-parse", "--is-inside-work-tree")
+	if err := cmd.Run(); err != nil {
+		return false
+	}
+	return true
 }
