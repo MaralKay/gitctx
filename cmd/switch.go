@@ -32,8 +32,8 @@ func switchContext(name string, verboseFlag bool) {
 			if err == nil && currentTarget == path[0] {
 				if verboseFlag {
 					fmt.Println("Symlink already exists and points to the specified .gitconfig file. Doing nothing.")
+					goto jumpToSSHConfig
 				}
-				goto jumpToSSHConfig
 			} else {
 				if verboseFlag {
 					fmt.Printf("Removing existing symlink: %s\n", targetAbsPath)
@@ -51,6 +51,7 @@ func switchContext(name string, verboseFlag bool) {
 
 		// Create a new symlink
 		createSymlink(path, targetAbsPath)
+		goto jumpToSSHConfig
 
 	jumpToSSHConfig:
 		configureSSH(path[1])
@@ -83,15 +84,38 @@ func createSymlink(path []string, targetPath string) {
 }
 
 func configureSSH(path string) {
-	cmd := exec.Command("bash", "-c", "git config --global core.sshCommand \"ssh -F "+path+"\"")
 
-	// Run the command and capture its output
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		if verboseFlag {
-			fmt.Println("Standard Error Output:", string(output))
+	if isGitRepo() {
+		cmd := exec.Command("bash", "-c", "git config core.sshCommand \"ssh -F "+path+"\"")
+
+		// Run the command and capture its output
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			if verboseFlag {
+				fmt.Println("Standard Error Output:", string(output))
+			}
+			fmt.Printf("Error setting up ssh config: %v\n", err)
+			os.Exit(1)
 		}
-		fmt.Printf("Error setting up ssh config: %v\n", err)
-		os.Exit(1)
+	} else {
+		cmd := exec.Command("bash", "-c", "git config --global core.sshCommand \"ssh -F "+path+"\"")
+
+		// Run the command and capture its output
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			if verboseFlag {
+				fmt.Println("Standard Error Output:", string(output))
+			}
+			fmt.Printf("Error setting up ssh config: %v\n", err)
+			os.Exit(1)
+		}
 	}
+}
+
+func isGitRepo() bool {
+	cmd := exec.Command("git", "rev-parse", "--is-inside-work-tree")
+	if err := cmd.Run(); err != nil {
+		return false
+	}
+	return true
 }
