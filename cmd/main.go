@@ -12,18 +12,21 @@ var configFileName = userHomePath + "/.gitctx.config"
 var currentContextPath = userHomePath + "/.gitctx.current"
 var targetFile = userHomePath + "/.gitconfig"
 var verboseFlag = false
+var cliVersion = "v1.1.1"
 
 func main() {
 	helpCommand := flag.NewFlagSet("-h", flag.ExitOnError)
 	addCommand := flag.NewFlagSet("add", flag.ExitOnError)
 	showCommand := flag.NewFlagSet("show", flag.ExitOnError)
 	migrateContextCommand := flag.NewFlagSet("migrate", flag.ExitOnError)
+	versionCommand := flag.NewFlagSet("version", flag.ExitOnError)
 
 	// Set Usage message for commands
 	helpCommand.Usage = showHelp
 	addCommand.Usage = showHelp
 	showCommand.Usage = showHelp
 	migrateContextCommand.Usage = showHelp
+	versionCommand.Usage = showHelp
 
 	// Parse the command-line arguments
 	if len(os.Args) < 2 {
@@ -57,6 +60,8 @@ func main() {
 		showContext()
 	case "migrate":
 		migrateCurrentContextFile(currentContextPath)
+	case "version":
+		fmt.Printf("%v\n", cliVersion)
 	default:
 		switchContext(subcommand, verboseFlag)
 	}
