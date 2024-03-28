@@ -8,7 +8,7 @@
 - **Mapping Support**: Store and manage multiple configurations by creating mappings to git config files and ssh config files.
 - **Inspired by kubectx**: If you're familiar with `kubectx`, `gitctx` operates in a similar fashion for git configurations.
 
-## Release Notes
+## Upgrade Notes
 
 ### Upgrade to v1.1.0
 In this release the core functionality of the tool has changed, allowing you to keep track of both local repo contexts and global context. The format of the `.gitctx.current` has changed, therefore in order to be able to run `gitctx` without issues you need to run as a first step after upgrading your binary package the following command:
