@@ -32,8 +32,8 @@ func switchContext(name string, verboseFlag bool) {
 			if err == nil && currentTarget == path[0] {
 				if verboseFlag {
 					fmt.Println("Symlink already exists and points to the specified .gitconfig file. Doing nothing.")
-					goto jumpToSSHConfig
 				}
+				goto jumpToSSHConfig
 			} else {
 				if verboseFlag {
 					fmt.Printf("Removing existing symlink: %s\n", targetAbsPath)
