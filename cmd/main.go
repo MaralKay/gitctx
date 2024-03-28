@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"os/exec"
 	"os/user"
 )
 
@@ -18,11 +17,13 @@ func main() {
 	helpCommand := flag.NewFlagSet("-h", flag.ExitOnError)
 	addCommand := flag.NewFlagSet("add", flag.ExitOnError)
 	showCommand := flag.NewFlagSet("show", flag.ExitOnError)
+	migrateContextCommand := flag.NewFlagSet("migrate", flag.ExitOnError)
 
 	// Set Usage message for commands
 	helpCommand.Usage = showHelp
 	addCommand.Usage = showHelp
 	showCommand.Usage = showHelp
+	migrateContextCommand.Usage = showHelp
 
 	// Parse the command-line arguments
 	if len(os.Args) < 2 {
@@ -40,12 +41,6 @@ func main() {
 		}
 	}
 
-	// Check if inside a Git repository directory
-	if !isGitRepo() {
-		fmt.Println("Error: You must be in a Git repository")
-		os.Exit(1)
-	}
-
 	// Parse the subcommand
 	subcommand := os.Args[1]
 	switch subcommand {
@@ -60,6 +55,8 @@ func main() {
 	case "show":
 		showCommand.Parse(os.Args[2:])
 		showContext()
+	case "migrate":
+		migrateCurrentContextFile(currentContextPath)
 	default:
 		switchContext(subcommand, verboseFlag)
 	}
@@ -74,12 +71,4 @@ func getUserHome() string {
 	}
 
 	return currentUser.HomeDir
-}
-
-func isGitRepo() bool {
-	cmd := exec.Command("git", "rev-parse", "--is-inside-work-tree")
-	if err := cmd.Run(); err != nil {
-		return false
-	}
-	return true
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 )
 
@@ -46,25 +45,6 @@ func addContext(verboseFlag bool) {
 		os.Exit(1)
 	}
 
-	// Get the absolute path of the target file
-	targetAbsPath, err := filepath.Abs(targetFile)
-	if err != nil {
-		fmt.Printf("Error: Unable to get absolute path for '%s'.\n", targetFile)
-		os.Exit(1)
-	}
-
-	cmd := exec.Command("bash", "-c", "git config core.sshCommand \"ssh -F "+sshConfigAbsPath+"\"")
-
-	// Run the command and capture its output
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		if verboseFlag {
-			fmt.Println("Standard Error Output:", string(output))
-		}
-		fmt.Printf("Error setting up ssh config: %v\n", err)
-		os.Exit(1)
-	}
-
 	// Store the name and path in the configuration file
 	if err := saveConfig(name, gitconfigAbsPath, sshConfigAbsPath); err != nil {
 		fmt.Printf("Error: Unable to save configuration. %v\n", err)
@@ -73,52 +53,5 @@ func addContext(verboseFlag bool) {
 
 	fmt.Println("Configuration saved.")
 
-	// Check if a symlink with the target file name already exists
-	if _, err := os.Stat(targetAbsPath); err == nil {
-		// Check if the existing symlink already points to the specified .gitconfig file
-		currentTarget, err := os.Readlink(targetAbsPath)
-		if err == nil && currentTarget == gitconfigAbsPath {
-			if verboseFlag {
-				fmt.Println("Symlink already exists and points to the specified .gitconfig file. Doing nothing.")
-			}
-
-			if err := updateContext(name, currentContextPath, verboseFlag); err != nil {
-				fmt.Printf("Error: Unable to update context")
-				os.Exit(1)
-			}
-
-			fmt.Printf("Updated context to %s\n", name)
-			os.Exit(0)
-		} else {
-			if verboseFlag {
-				fmt.Printf("Removing existing symlink: %s\n", targetAbsPath)
-			}
-			if err := os.Remove(targetAbsPath); err != nil {
-				if verboseFlag {
-					fmt.Printf("Error: Unable to remove existing symlink '%s'.\n", targetAbsPath)
-				}
-				fmt.Println("Error: Unable to set context.")
-				os.Exit(1)
-			}
-		}
-	}
-
-	// Create a new symlink
-	if err := os.Symlink(gitconfigAbsPath, targetAbsPath); err != nil {
-		if verboseFlag {
-			fmt.Printf("Error: Unable to create symlink '%s' -> '%s'.\n", targetAbsPath, gitconfigAbsPath)
-		}
-		fmt.Println("Error: Unable to set context.")
-		os.Exit(1)
-	}
-	if verboseFlag {
-		fmt.Printf("Symlink created: %s -> %s\n", targetAbsPath, gitconfigAbsPath)
-	}
-
-	if err := updateContext(name, currentContextPath, verboseFlag); err != nil {
-		fmt.Printf("Error: Unable to update context")
-		os.Exit(1)
-	}
-
-	fmt.Printf("Updated context to %s\n", name)
+	switchContext(name, verboseFlag)
 }
