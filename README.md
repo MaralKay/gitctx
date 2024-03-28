@@ -28,7 +28,7 @@ USAGE:
   gitctx <NAME>    [-v]      : switch to context <NAME>
   gitctx show                : show current context
   gitctx add       [-v]      : add a new context
-  gitctx migrate             : migrate the current-context file to v1.1.0 format
+  gitctx migrate             : migrate the current-context file from v1.0.x to v1.1.0 format
 
 
 FLAGS:
