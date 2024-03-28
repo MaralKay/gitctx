@@ -15,6 +15,7 @@ In this release the core functionality of the tool has changed, allowing you to 
 ```
 gitctx migrate
 ```
+**Known issue:** If you already ran the migrate command, don't run it again, as it will break the config. This action will be prevented in a future release.
 
 
 ## Installation
@@ -55,7 +56,8 @@ To show the current git context:
 ```bash
 ~ gitctx show
 
-work
+global: work
+gitctx: personal
 ```
 
 ### List Contexts
