@@ -17,11 +17,13 @@ func main() {
 	helpCommand := flag.NewFlagSet("-h", flag.ExitOnError)
 	addCommand := flag.NewFlagSet("add", flag.ExitOnError)
 	showCommand := flag.NewFlagSet("show", flag.ExitOnError)
+	migrateContextCommand := flag.NewFlagSet("migrate", flag.ExitOnError)
 
 	// Set Usage message for commands
 	helpCommand.Usage = showHelp
 	addCommand.Usage = showHelp
 	showCommand.Usage = showHelp
+	migrateContextCommand.Usage = showHelp
 
 	// Parse the command-line arguments
 	if len(os.Args) < 2 {
@@ -53,6 +55,8 @@ func main() {
 	case "show":
 		showCommand.Parse(os.Args[2:])
 		showContext()
+	case "migrate":
+		migrateCurrentContextFile(currentContextPath)
 	default:
 		switchContext(subcommand, verboseFlag)
 	}
