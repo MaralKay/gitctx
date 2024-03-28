@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 func switchContext(name string, verboseFlag bool) {
@@ -33,7 +34,7 @@ func switchContext(name string, verboseFlag bool) {
 				if verboseFlag {
 					fmt.Println("Symlink already exists and points to the specified .gitconfig file. Doing nothing.")
 				}
-				goto jumpToSSHConfig
+				goto afterSymlinkCreation
 			} else {
 				if verboseFlag {
 					fmt.Printf("Removing existing symlink: %s\n", targetAbsPath)
@@ -51,17 +52,10 @@ func switchContext(name string, verboseFlag bool) {
 
 		// Create a new symlink
 		createSymlink(path, targetAbsPath)
-		goto jumpToSSHConfig
+		goto afterSymlinkCreation
 
-	jumpToSSHConfig:
-		configureSSH(path[1])
-
-		if err := updateContext(name, currentContextPath, verboseFlag); err != nil {
-			fmt.Printf("Error: Unable to update context")
-			os.Exit(1)
-		}
-
-		fmt.Printf("Updated context to %s\n", name)
+	afterSymlinkCreation:
+		configureSSH(path[1], name)
 
 	} else {
 		fmt.Printf("Error: Name '%s' not found in configuration.\n", name)
@@ -83,20 +77,25 @@ func createSymlink(path []string, targetPath string) {
 	}
 }
 
-func configureSSH(path string) {
+func configureSSH(path string, name string) {
 
 	if isGitRepo() {
 		cmd := exec.Command("bash", "-c", "git config core.sshCommand \"ssh -F "+path+"\"")
 
 		// Run the command and capture its output
-		output, err := cmd.CombinedOutput()
-		if err != nil {
+		output, sshErr := cmd.CombinedOutput()
+		if sshErr != nil {
 			if verboseFlag {
 				fmt.Println("Standard Error Output:", string(output))
 			}
-			fmt.Printf("Error setting up ssh config: %v\n", err)
+			fmt.Printf("Error setting up ssh config: %v\n", sshErr)
 			os.Exit(1)
 		}
+
+		repoName := strings.TrimSpace(getRepoName())
+
+		updateCurrentContext(name, currentContextPath, repoName, verboseFlag)
+
 	} else {
 		cmd := exec.Command("bash", "-c", "git config --global core.sshCommand \"ssh -F "+path+"\"")
 
@@ -109,6 +108,7 @@ func configureSSH(path string) {
 			fmt.Printf("Error setting up ssh config: %v\n", err)
 			os.Exit(1)
 		}
+		updateCurrentContext(name, currentContextPath, "global", verboseFlag)
 	}
 }
 
@@ -118,4 +118,26 @@ func isGitRepo() bool {
 		return false
 	}
 	return true
+}
+
+func getRepoName() string {
+	getRepoName := exec.Command("bash", "-c", "basename `git rev-parse --show-toplevel`")
+	repoNameOutput, repoNameErr := getRepoName.CombinedOutput()
+	if repoNameErr != nil {
+		if verboseFlag {
+			fmt.Println("Standard Error Output:", string(repoNameOutput))
+		}
+		fmt.Printf("Error getting name of repo: %v\n", repoNameErr)
+		os.Exit(1)
+	}
+	return string(repoNameOutput)
+}
+
+func updateCurrentContext(name string, currentContextPath string, repoName string, verboseFlag bool) {
+	if err := updateContext(name, currentContextPath, repoName, verboseFlag); err != nil {
+		fmt.Printf("Error: Unable to update context")
+		os.Exit(1)
+	}
+
+	fmt.Printf("Updated context to %s\n", name)
 }
