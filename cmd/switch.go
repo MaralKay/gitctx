@@ -33,7 +33,7 @@ func switchContext(name string, verboseFlag bool) {
 				if verboseFlag {
 					fmt.Println("Symlink already exists and points to the specified .gitconfig file. Doing nothing.")
 				}
-				os.Exit(0)
+				goto jumpToSSHConfig
 			} else {
 				if verboseFlag {
 					fmt.Printf("Removing existing symlink: %s\n", targetAbsPath)
@@ -50,27 +50,10 @@ func switchContext(name string, verboseFlag bool) {
 		}
 
 		// Create a new symlink
-		if err := os.Symlink(path[0], targetAbsPath); err != nil {
-			if verboseFlag {
-				fmt.Printf("Error: Unable to create symlink '%s' -> '%s'.\n", targetAbsPath, path)
-			}
-			fmt.Println("Error: Unable to switch context.")
-			os.Exit(1)
-		}
-		if verboseFlag {
-			fmt.Printf("Symlink created: %s -> %s\n", targetAbsPath, path)
-		}
+		createSymlink(path, targetAbsPath)
 
-		cmd := exec.Command("bash", "-c", "git config core.sshCommand \"ssh -F "+path[1]+"\"")
-
-		// Run the command and capture its output
-		output, err := cmd.CombinedOutput()
-		if err != nil {
-			if verboseFlag {
-				fmt.Println("Standard Error Output:", string(output))
-			}
-			fmt.Printf("Error setting up ssh config: %v\n", err)
-		}
+	jumpToSSHConfig:
+		configureSSH(path[1])
 
 		if err := updateContext(name, currentContextPath, verboseFlag); err != nil {
 			fmt.Printf("Error: Unable to update context")
@@ -81,6 +64,34 @@ func switchContext(name string, verboseFlag bool) {
 
 	} else {
 		fmt.Printf("Error: Name '%s' not found in configuration.\n", name)
+		os.Exit(1)
+	}
+}
+
+func createSymlink(path []string, targetPath string) {
+	// Create a new symlink
+	if err := os.Symlink(path[0], targetPath); err != nil {
+		if verboseFlag {
+			fmt.Printf("Error: Unable to create symlink '%s' -> '%s'.\n", targetPath, path)
+		}
+		fmt.Println("Error: Unable to switch context.")
+		os.Exit(1)
+	}
+	if verboseFlag {
+		fmt.Printf("Symlink created: %s -> %s\n", targetPath, path)
+	}
+}
+
+func configureSSH(path string) {
+	cmd := exec.Command("bash", "-c", "git config --global core.sshCommand \"ssh -F "+path+"\"")
+
+	// Run the command and capture its output
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		if verboseFlag {
+			fmt.Println("Standard Error Output:", string(output))
+		}
+		fmt.Printf("Error setting up ssh config: %v\n", err)
 		os.Exit(1)
 	}
 }
