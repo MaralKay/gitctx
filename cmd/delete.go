@@ -13,7 +13,6 @@ func deleteContext(contextName string, configFileName string, verboseFlag bool) 
 	var answer string
 	fmt.Scanln(&answer)
 
-	// Check if the .gitconfig file exists
 	if answer != "y" {
 		fmt.Printf("Delete cancelled")
 		os.Exit(0)
