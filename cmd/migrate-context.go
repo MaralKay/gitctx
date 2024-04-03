@@ -15,6 +15,11 @@ func migrateCurrentContextFile(currentContextPath string) {
 		os.Exit(1)
 	}
 
+	if strings.Contains(string(content), "global: ") {
+		fmt.Println("Nothing to migrate here.")
+		os.Exit(0)
+	}
+
 	// Modify the content by adding "global: " in front of the existing content
 	newContent := []byte("global: " + strings.TrimSpace(string(content)))
 
